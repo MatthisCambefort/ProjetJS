@@ -142,60 +142,56 @@ function detecteCollisionJoueurAvecObstacles() {
     // On va tester si le joueur est en collision avec un des obstacles
     let obstacleCourant;
 
-    for(let i = 0; i < tableauDesObjetsGraphiques.length; i++) {
+    for (let i = 0; i < tableauDesObjetsGraphiques.length; i++) {
         let o = tableauDesObjetsGraphiques[i];
         if (o instanceof Obstacle) {
             if (rectsOverlap(joueur.x, joueur.y, joueur.l, joueur.h, o.x, o.y, o.l, o.h)) {
                 collisionExist = true;
                 obstacleCourant = o;
-                // on sort de la boucle !
-                break;
-                //o.drawBoundingBox(ctx);
-                //joueur.draw(ctx);
-                //joueur.drawBoundingBox(ctx);
+                if (collisionExist) {
+                    if ((joueur.y < obstacleCourant.y) && (joueur.x > (obstacleCourant.x - joueur.l))
+                        && (joueur.x < (obstacleCourant.x + obstacleCourant.l))) {
+                        console.log("collision par le haut de l'obstacle")
+                        joueur.y = obstacleCourant.y - joueur.h;
+                        joueur.vy = 0
+                    } else if (joueur.x < obstacleCourant.x) {
+                        //collision par gauche
+                        console.log("collision par la gauche de l'obstacle")
+                        joueur.x = obstacleCourant.x - joueur.l;
+                        joueur.vx = 0;
+                        //joueur.y = obstacleCourant.y;
+                    } else if (joueur.x > obstacleCourant.x) {
+                        console.log("collision par la droite de l'obstacle")
+                        joueur.x = obstacleCourant.x + obstacleCourant.l;
+                        //joueur.y = obstacleCourant.y;
+                        joueur.vx = 0;
+                    }
+                } else {
+                    joueur.couleur = 'green';
+                }
             }
         }
+
     }
 
-    
-
-    if (collisionExist) {
-        if ((joueur.y < obstacleCourant.y) && (joueur.x > (obstacleCourant.x - joueur.l)) 
-                && (joueur.x < (obstacleCourant.x + obstacleCourant.l))) {
-            console.log("collision par le haut de l'obstacle")
-            joueur.y = obstacleCourant.y - joueur.h;
-            joueur.vy=0
-        } else if (joueur.x < obstacleCourant.x)  {
-            //collision par gauche
-            console.log("collision par la gauche de l'obstacle")
-            joueur.x = obstacleCourant.x - joueur.l;
-            joueur.vx = 0;
-            //joueur.y = obstacleCourant.y;
-        } else if (joueur.x > obstacleCourant.x) {
-            console.log("collision par la droite de l'obstacle")
-            joueur.x = obstacleCourant.x + obstacleCourant.l;
-            //joueur.y = obstacleCourant.y;
-            joueur.vx = 0;
-        }
-
-
-        /*else if ((joueur.y < obstacleCourant.y) && (joueur.x < obstacleCourant.x)){
-            joueur.x = obstacleCourant.x - joueur.l;
-            joueur.y = obstacleCourant.y - joueur.h;
-        }
-
-        else if((joueur.y < obstacleCourant.y) && (joueur.x > obstacleCourant.x)){
-            joueur.x = obstacleCourant.x + obstacleCourant.l;
-            joueur.y = obstacleCourant.y - joueur.h;
-        }*/
 
 
 
-        //gameState = 'gameOver';
-
-    } else {
-        joueur.couleur = 'green';
+    /*else if ((joueur.y < obstacleCourant.y) && (joueur.x < obstacleCourant.x)){
+        joueur.x = obstacleCourant.x - joueur.l;
+        joueur.y = obstacleCourant.y - joueur.h;
     }
+
+    else if((joueur.y < obstacleCourant.y) && (joueur.x > obstacleCourant.x)){
+        joueur.x = obstacleCourant.x + obstacleCourant.l;
+        joueur.y = obstacleCourant.y - joueur.h;
+    }*/
+
+
+
+    //gameState = 'gameOver';
+
+
 }
 
 
