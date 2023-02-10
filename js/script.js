@@ -49,7 +49,7 @@ function creerDesObstaclesLevel1() {
 
     tableauDesObjetsGraphiques.push(new DecorClimb(190, 250, 30, 30, 'black'));
     tableauDesObjetsGraphiques.push(new DecorClimb(220, 220, 30, 60, 'black'));
-    tableauDesObjetsGraphiques.push(new DecorClimb(250, 190, 30, 90, 'black'));
+    //tableauDesObjetsGraphiques.push(new DecorClimb(250, 190, 30, 90, 'black'));
 
 
 
@@ -160,21 +160,22 @@ function detecteCollisionJoueurAvecObstacles() {
     
 
     if (collisionExist) {
-        if (((joueur.y+joueur.h) < obstacleCourant.y+4) && (joueur.x > (obstacleCourant.x - joueur.l)) 
+        if ((joueur.y < obstacleCourant.y) && (joueur.x > (obstacleCourant.x - joueur.l)) 
                 && (joueur.x < (obstacleCourant.x + obstacleCourant.l))) {
             console.log("collision par le haut de l'obstacle")
-            joueur.y = obstacleCourant.y - joueur.h-4;
-
+            joueur.y = obstacleCourant.y - joueur.h;
+            joueur.vy=0
         } else if (joueur.x < obstacleCourant.x)  {
             //collision par gauche
             console.log("collision par la gauche de l'obstacle")
             joueur.x = obstacleCourant.x - joueur.l;
+            joueur.vx = 0;
             //joueur.y = obstacleCourant.y;
         } else if (joueur.x > obstacleCourant.x) {
             console.log("collision par la droite de l'obstacle")
             joueur.x = obstacleCourant.x + obstacleCourant.l;
             //joueur.y = obstacleCourant.y;
-
+            joueur.vx = 0;
         }
 
 
