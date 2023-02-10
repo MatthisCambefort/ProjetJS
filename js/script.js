@@ -1,8 +1,8 @@
-    import Joueur from './JoueurClass.js';
+import Joueur from './JoueurClass.js';
 import Obstacle from './ObstacleClass.js';
-import Decor  from './DecorClass.js';
+import Decor from './DecorClass.js';
 import DecorClimb from './DecorClimb.js';
-import {ajouteEcouteursClavier, inputState, mousePos } from './ecouteurs.js';
+import { ajouteEcouteursClavier, inputState, mousePos } from './ecouteurs.js';
 import { rectsOverlap } from './collisions.js';
 
 
@@ -30,7 +30,7 @@ function init(event) {
     //ajouteEcouteurSouris();
 
     // On va créer un joueur params (x, y, l, h, couleur)
-    joueur = new Joueur(10, 280, 30, 30, 'green',3);
+    joueur = new Joueur(10, 280, 30, 30, 'green', 3);
     joueur.vy = 280;
     tableauDesObjetsGraphiques.push(joueur);
 
@@ -41,15 +41,17 @@ function init(event) {
 
 }
 
-  
+
 // Obstacle paramètres : (x, y, l, h, couleur)
 function creerDesObstaclesLevel1() {
     tableauDesObjetsGraphiques.push(new Decor(0, 280, canvas.width, canvas.height, 'green'));
     tableauDesObjetsGraphiques.push(new Decor(0, 300, canvas.width, canvas.height, '#684027'));
 
     tableauDesObjetsGraphiques.push(new DecorClimb(190, 250, 30, 30, 'black'));
-    
-     
+    tableauDesObjetsGraphiques.push(new DecorClimb(220, 220, 30, 60, 'black'));
+    tableauDesObjetsGraphiques.push(new DecorClimb(250, 190, 30, 90, 'black'));
+
+
 
 
 
@@ -76,15 +78,15 @@ function animationLoop() {
 
             // 3 - on déplace les objets
             testeEtatClavierPourJoueur();
-            
+
+            //joueur.followMouse(mousePos);
 
             joueur.move();
-            //joueur.followMouse()
             joueur.testeCollisionAvecBordsDuCanvas(canvas.width, canvas.height);
             joueur.detecteCollisionJoueurAvecSol();
             detecteCollisionJoueurAvecObstacles();
             //grimperDecor();
-            
+
             break;
     }
 
@@ -99,10 +101,10 @@ function afficheMenuStart(ctx) {
     ctx.font = "50px Arial";
     ctx.fillText("Press s to start", 190, 100);
     ctx.strokeText("Press s to start", 190, 100);
-    if(inputState.start) {
+    if (inputState.start) {
         gameState = 'jeuEnCours';
     }
-}   
+}
 function afficheGameOver(ctx) {
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -112,7 +114,7 @@ function afficheGameOver(ctx) {
     ctx.strokeText("GAME OVER", 190, 100);
     ctx.fillText("Press s to restart", 250, 300);
     ctx.strokeText("Press s to restart", 250, 300);
-    if(inputState.start) {
+    if (inputState.start) {
         gameState = 'menuStart';
         joueur.x = 0;
     }
@@ -139,38 +141,43 @@ function detecteCollisionJoueurAvecObstacles() {
     let collisionExist = false;
     // On va tester si le joueur est en collision avec un des obstacles
     let obstacleCourant;
-    tableauDesObjetsGraphiques.forEach(o => {
+
+    for(let i = 0; i < tableauDesObjetsGraphiques.length; i++) {
+        let o = tableauDesObjetsGraphiques[i];
         if (o instanceof Obstacle) {
             if (rectsOverlap(joueur.x, joueur.y, joueur.l, joueur.h, o.x, o.y, o.l, o.h)) {
                 collisionExist = true;
                 obstacleCourant = o;
+                // on sort de la boucle !
+                break;
                 //o.drawBoundingBox(ctx);
                 //joueur.draw(ctx);
                 //joueur.drawBoundingBox(ctx);
             }
         }
-    });
+    }
+
+    
 
     if (collisionExist) {
-        if((joueur.x + joueur.l) >= obstacleCourant.x){
-            //collision par le haut
+        if (((joueur.y+joueur.h) < obstacleCourant.y+4) && (joueur.x > (obstacleCourant.x - joueur.l)) 
+                && (joueur.x < (obstacleCourant.x + obstacleCourant.l))) {
+            console.log("collision par le haut de l'obstacle")
+            joueur.y = obstacleCourant.y - joueur.h-4;
+
+        } else if (joueur.x < obstacleCourant.x)  {
+            //collision par gauche
             console.log("collision par la gauche de l'obstacle")
             joueur.x = obstacleCourant.x - joueur.l;
-            joueur.y = obstacleCourant.y;
-        }
-        else if((joueur.x) <=(obstacleCourant.x+obstacleCourant.l)){
+            //joueur.y = obstacleCourant.y;
+        } else if (joueur.x > obstacleCourant.x) {
             console.log("collision par la droite de l'obstacle")
             joueur.x = obstacleCourant.x + obstacleCourant.l;
-            joueur.y = obstacleCourant.y;
+            //joueur.y = obstacleCourant.y;
 
         }
-        else if((joueur.y + joueur.h) >= obstacleCourant.y){
-            console.log("collision par le haut de l'obstacle")
-            joueur.y = obstacleCourant.y - obstacleCourant.h;
-            joueur.x = obstacleCourant.x;
-        }
 
-        
+
         /*else if ((joueur.y < obstacleCourant.y) && (joueur.x < obstacleCourant.x)){
             joueur.x = obstacleCourant.x - joueur.l;
             joueur.y = obstacleCourant.y - joueur.h;
@@ -181,32 +188,32 @@ function detecteCollisionJoueurAvecObstacles() {
             joueur.y = obstacleCourant.y - joueur.h;
         }*/
 
-        
+
 
         //gameState = 'gameOver';
-        
+
     } else {
         joueur.couleur = 'green';
     }
 }
 
 
-function grimperDecor(){
+function grimperDecor() {
     let climbExist = false;
     // On va tester si le joueur est en collision avec un des obstacles
     tableauDesObjetsGraphiques.forEach(dc => {
-        if(dc instanceof DecorClimb) {
+        if (dc instanceof DecorClimb) {
             if (rectsOverlap(joueur.x, joueur.y, joueur.l, joueur.h, dc.x, dc.y, dc.l, dc.h)) {
                 climbExist = true;
             }
         }
     });
-/*decor1 = new DecorClimb(100, 250, 30, 30, 'black');
-    if (climbExist) {
-        joueur.couleur = 'blue';
-        joueur.x = 10;
-        joueur.y = 10;
-    } else {
-        joueur.couleur = 'green';
-    }*/
+    /*decor1 = new DecorClimb(100, 250, 30, 30, 'black');
+        if (climbExist) {
+            joueur.couleur = 'blue';
+            joueur.x = 10;
+            joueur.y = 10;
+        } else {
+            joueur.couleur = 'green';
+        }*/
 }

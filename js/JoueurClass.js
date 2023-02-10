@@ -26,7 +26,11 @@ export default class Joueur extends ObjetGraphique {
                  
     }
 
-
+    followMouse(mousePos) {
+        this.x = mousePos.x;
+        this.y = mousePos.y;
+    }
+    
     testeCollisionAvecBordsDuCanvas(largeurCanvas, hauteurCanvas) {
         if (this.x + this.l > largeurCanvas) {
             // On positionne le joueur à la limite du canvas, au point de contact
